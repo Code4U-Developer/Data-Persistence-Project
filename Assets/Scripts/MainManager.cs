@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
+[DefaultExecutionOrder(1000)]
 public class MainManager : MonoBehaviour
 {
     public Brick BrickPrefab;
@@ -11,6 +15,7 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text BestScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -42,15 +47,16 @@ public class MainManager : MonoBehaviour
     {
         if (!m_Started)
         {
+            BestScoreText.text = "Best Score : " + PersistentDataManager.Instance.BestName +" : "+PersistentDataManager.Instance.BestScore;
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                m_Started = true;
-                float randomDirection = Random.Range(-1.0f, 1.0f);
-                Vector3 forceDir = new Vector3(randomDirection, 1, 0);
-                forceDir.Normalize();
+            m_Started = true;
+            float randomDirection = Random.Range(-1.0f, 1.0f);
+            Vector3 forceDir = new Vector3(randomDirection, 1, 0);
+            forceDir.Normalize();
 
-                Ball.transform.SetParent(null);
-                Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
+            Ball.transform.SetParent(null);
+            Ball.AddForce(forceDir * 2.0f, ForceMode.VelocityChange);
             }
         }
         else if (m_GameOver)
@@ -72,5 +78,10 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        if(m_Points > PersistentDataManager.Instance.BestScore){
+        PersistentDataManager.Instance.BestName =  PersistentDataManager.Instance.Name;
+        PersistentDataManager.Instance.BestScore = m_Points;
+        }
+        PersistentDataManager.Instance.SaveBestName();
     }
 }
