@@ -10,7 +10,6 @@ public class PersistentDataManager : MonoBehaviour
     public static PersistentDataManager Instance;
 
     public string Name;
-    public int Score = 0;
     public string BestName;
     public int BestScore = 0;
 
@@ -39,16 +38,8 @@ public class PersistentDataManager : MonoBehaviour
     public void SaveBestName()
     {
     SaveData data = new SaveData();
-    if(data.BestName != null){
-        if(data.BestScore < Score){
-            data.BestName = Name;
-            data.BestScore = Score;
-        }
-    }else{
-        data.BestName = Name;
-        data.BestScore = Score;
-    }
-
+    data.BestName = BestName;
+    data.BestScore = BestScore;
     string json = JsonUtility.ToJson(data);
   
     File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
